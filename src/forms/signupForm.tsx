@@ -1,5 +1,6 @@
 import React from "react";
 import { Formik, Form, Field } from "formik";
+import { USERS } from "../apiEndpoints";
 import "./form.css";
 
 interface Values {
@@ -39,6 +40,20 @@ export const validatePasswordConfirm = (
   return error;
 };
 
+const handleSubmit = (values: Values) => {
+  const { passwordConfirm, ...data } = values;
+  fetch(USERS, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify(data),
+  })
+    .then((res) => res.json())
+    .then(console.log);
+};
+
 const SignupForm: React.FC<{}> = () => {
   return (
     <div className="signup-form">
@@ -49,6 +64,7 @@ const SignupForm: React.FC<{}> = () => {
           password: "",
           passwordConfirm: "",
         }}
+        onSubmit={(values: Values) => handleSubmit(values)}
       >
         {({ errors, touched, values, isSubmitting }) => (
           <Form className="form">
