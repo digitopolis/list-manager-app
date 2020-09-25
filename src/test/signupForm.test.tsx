@@ -3,7 +3,7 @@ import {
   validateEmail,
   validatePassword,
   validatePasswordConfirm,
-} from "../forms/signupForm";
+} from "../forms/validators";
 
 test("validateEmail validates presence of email", () => {
   const validEmail = "myname@email.com";
