@@ -1,21 +1,19 @@
 import React, { useState } from "react";
 import { Formik, Form, Field } from "formik";
 import "./form.css";
-import { validateEmail, validatePassword } from "./validators";
-import { LOGIN } from "../apiEndpoints";
+import { validateEmail } from "./validators";
+import { FORGOT } from "../apiEndpoints";
 import { Redirect } from "react-router";
-import { Link } from "react-router-dom";
 
 interface Values {
   email: string;
-  password: string;
 }
 
-const SignInForm: React.FC<{}> = () => {
-  const [loggedIn, setLoggedIn] = useState(false);
+const ForgotPassword: React.FC<{}> = () => {
+  const [submitted, setSubmitted] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const handleSubmit = (values: Values) => {
-    fetch(LOGIN, {
+    fetch(FORGOT, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -27,12 +25,9 @@ const SignInForm: React.FC<{}> = () => {
       .then(handleResponse);
   };
 
-  const handleResponse = (response: {
-    user?: { email: string };
-    error?: string;
-  }) => {
-    if (response.user) {
-      setLoggedIn(true);
+  const handleResponse = (response: { message?: string; error?: string }) => {
+    if (response.message) {
+      setSubmitted(true);
     } else if (response.error) {
       setErrorMessage(response.error);
     }
@@ -40,12 +35,15 @@ const SignInForm: React.FC<{}> = () => {
 
   return (
     <div className="signup-form">
-      {loggedIn ? <Redirect to="/profile" /> : null}
-      <h1>Sign in!</h1>
+      {submitted ? <Redirect to="/" /> : null}
+      <h1>Forgot your password?</h1>
+      <p>
+        Enter the email address associated with your account to receive a link
+        to reset your password
+      </p>
       <Formik
         initialValues={{
           email: "",
-          password: "",
         }}
         onSubmit={handleSubmit}
       >
@@ -62,24 +60,10 @@ const SignInForm: React.FC<{}> = () => {
               <div className="error-message">{errors.email}</div>
             ) : null}
 
-            <label htmlFor="password">Password</label>
-            <Field
-              id="password"
-              name="password"
-              type="password"
-              placeholder="Password"
-              validate={validatePassword}
-            />
-            {errors.password && touched.password ? (
-              <div className="error-message">{errors.password}</div>
-            ) : null}
-
             <button type="submit">Submit</button>
             {errorMessage !== "" ? (
               <div className="error-message">{errorMessage}</div>
             ) : null}
-
-            <Link to="/forgot-password">Forgot your password?</Link>
           </Form>
         )}
       </Formik>
@@ -87,4 +71,4 @@ const SignInForm: React.FC<{}> = () => {
   );
 };
 
-export default SignInForm;
+export default ForgotPassword;
