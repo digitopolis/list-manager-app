@@ -1,7 +1,10 @@
 import React, { useState } from "react";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { BrowserRouter, Switch, Route, Link } from "react-router-dom";
+import { Redirect } from "react-router";
 import SignupForm from "./forms/signupForm";
 import FormContainer from "./containers/formContainer";
+import MainContainer from "./containers/mainContainer";
+import ProfilePage from "./components/profilePage";
 import "./App.css";
 import SignInForm from "./forms/signInForm";
 
@@ -26,9 +29,10 @@ function App() {
           </div>
         </Route>
         <Route path="/profile">
-          <div>
-            <h1>In Progress</h1>
-          </div>
+          <MainContainer>
+            <Link to="/">Log out</Link>
+            <ProfilePage />
+          </MainContainer>
         </Route>
       </Switch>
     </BrowserRouter>
