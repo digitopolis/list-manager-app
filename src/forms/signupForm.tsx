@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { Formik, Form, Field } from "formik";
 import { USERS } from "../apiEndpoints";
 import "./form.css";
+import { Redirect } from "react-router";
 
 interface Values {
   email: string;
@@ -40,23 +41,30 @@ export const validatePasswordConfirm = (
   return error;
 };
 
-const handleSubmit = (values: Values) => {
-  const { passwordConfirm, ...data } = values;
-  fetch(USERS, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-    body: JSON.stringify(data),
-  })
-    .then((res) => res.json())
-    .then(console.log);
-};
-
 const SignupForm: React.FC<{}> = () => {
+  const [loggedIn, setLoggedIn] = useState(false);
+  const handleSubmit = (values: Values) => {
+    const { passwordConfirm, ...data } = values;
+    fetch(USERS, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((res) => res.json())
+      .then(handleResponse);
+  };
+
+  const handleResponse = (response: { user?: { email: string } }) => {
+    if (response.user) {
+      setLoggedIn(true);
+    }
+  };
   return (
     <div className="signup-form">
+      {loggedIn ? <Redirect to="/profile" /> : null}
       <h1>Sign up!</h1>
       <Formik
         initialValues={{
