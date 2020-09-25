@@ -7,6 +7,7 @@ import ProfilePage from "./components/profilePage";
 import "./App.css";
 import SignInForm from "./forms/signInForm";
 import ForgotPassword from "./forms/forgotPassword";
+import ResetPassword from "./forms/resetPassword";
 
 function App() {
   const [showSignup, toggleSignup] = useState(true);
@@ -38,6 +39,13 @@ function App() {
           <div className="App">
             <FormContainer>
               <ForgotPassword />
+            </FormContainer>
+          </div>
+        </Route>
+        <Route path="/reset-password">
+          <div className="App">
+            <FormContainer>
+              <ResetPassword />
             </FormContainer>
           </div>
         </Route>
