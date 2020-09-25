@@ -17,6 +17,7 @@ interface Values {
 
 const SignupForm: React.FC<{}> = () => {
   const [loggedIn, setLoggedIn] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const handleSubmit = (values: Values) => {
     const { passwordConfirm, ...data } = values;
     fetch(USERS, {
@@ -31,9 +32,14 @@ const SignupForm: React.FC<{}> = () => {
       .then(handleResponse);
   };
 
-  const handleResponse = (response: { user?: { email: string } }) => {
+  const handleResponse = (response: {
+    user?: { email: string };
+    error?: string;
+  }) => {
     if (response.user) {
       setLoggedIn(true);
+    } else if (response.error) {
+      setErrorMessage("Account already registered to that email address");
     }
   };
   return (
@@ -88,6 +94,9 @@ const SignupForm: React.FC<{}> = () => {
             ) : null}
 
             <button type="submit">Submit</button>
+            {errorMessage !== "" ? (
+              <div className="error-message">{errorMessage}</div>
+            ) : null}
           </Form>
         )}
       </Formik>
