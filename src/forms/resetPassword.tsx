@@ -1,38 +1,41 @@
 import React, { useState } from "react";
 import { Formik, Form, Field } from "formik";
+import { RESET } from "../apiEndpoints";
 import "./form.css";
-import { validateEmail, validatePassword } from "./validators";
-import { LOGIN } from "../apiEndpoints";
 import { Redirect } from "react-router";
-import { Link } from "react-router-dom";
+import {
+  validateEmail,
+  validatePassword,
+  validatePasswordConfirm,
+} from "./validators";
 
 interface Values {
   email: string;
+  token: string;
   password: string;
+  passwordConfirm: string;
 }
 
-const SignInForm: React.FC<{}> = () => {
-  const [loggedIn, setLoggedIn] = useState(false);
+const ResetPassword: React.FC<{}> = () => {
+  const [submitted, setSubmitted] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const handleSubmit = (values: Values) => {
-    fetch(LOGIN, {
+    const { passwordConfirm, ...data } = values;
+    fetch(RESET, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
       },
-      body: JSON.stringify(values),
+      body: JSON.stringify(data),
     })
       .then((res) => res.json())
       .then(handleResponse);
   };
 
-  const handleResponse = (response: {
-    user?: { email: string };
-    error?: string;
-  }) => {
-    if (response.user) {
-      setLoggedIn(true);
+  const handleResponse = (response: { message?: string; error?: string }) => {
+    if (response.message) {
+      setSubmitted(true);
     } else if (response.error) {
       setErrorMessage(response.error);
     }
@@ -40,16 +43,18 @@ const SignInForm: React.FC<{}> = () => {
 
   return (
     <div className="signup-form">
-      {loggedIn ? <Redirect to="/profile" /> : null}
-      <h1>Sign in!</h1>
+      {submitted ? <Redirect to="/" /> : null}
+      <h1>Password Reset</h1>
       <Formik
         initialValues={{
           email: "",
+          token: "",
           password: "",
+          passwordConfirm: "",
         }}
-        onSubmit={handleSubmit}
+        onSubmit={(values: Values) => handleSubmit(values)}
       >
-        {({ errors, touched }) => (
+        {({ errors, touched, values, isSubmitting }) => (
           <Form className="form">
             <label htmlFor="email">Email</label>
             <Field
@@ -62,24 +67,39 @@ const SignInForm: React.FC<{}> = () => {
               <div className="error-message">{errors.email}</div>
             ) : null}
 
-            <label htmlFor="password">Password</label>
+            <label htmlFor="token">Token</label>
+            <Field id="token" name="token" placeholder="token" />
+
+            <label htmlFor="password">New Password</label>
             <Field
               id="password"
               name="password"
               type="password"
               placeholder="Password"
-              validate={validatePassword}
+              validate={() => validatePassword(values.password)}
             />
             {errors.password && touched.password ? (
               <div className="error-message">{errors.password}</div>
+            ) : null}
+
+            <label htmlFor="passwordConfirm">Confirm password</label>
+            <Field
+              id="passwordConfirm"
+              name="passwordConfirm"
+              type="password"
+              placeholder="Confirm password"
+              validate={() =>
+                validatePasswordConfirm(values.password, values.passwordConfirm)
+              }
+            />
+            {errors.passwordConfirm && touched.passwordConfirm ? (
+              <div className="error-message">{errors.passwordConfirm}</div>
             ) : null}
 
             <button type="submit">Submit</button>
             {errorMessage !== "" ? (
               <div className="error-message">{errorMessage}</div>
             ) : null}
-
-            <Link to="/forgot-password">Forgot your password?</Link>
           </Form>
         )}
       </Formik>
@@ -87,4 +107,4 @@ const SignInForm: React.FC<{}> = () => {
   );
 };
 
-export default SignInForm;
+export default ResetPassword;

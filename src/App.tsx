@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { BrowserRouter, Switch, Route, Link } from "react-router-dom";
-import { Redirect } from "react-router";
 import SignupForm from "./forms/signupForm";
 import FormContainer from "./containers/formContainer";
 import MainContainer from "./containers/mainContainer";
 import ProfilePage from "./components/profilePage";
 import "./App.css";
 import SignInForm from "./forms/signInForm";
+import ForgotPassword from "./forms/forgotPassword";
+import ResetPassword from "./forms/resetPassword";
 
 function App() {
   const [showSignup, toggleSignup] = useState(true);
@@ -33,6 +34,20 @@ function App() {
             <Link to="/">Log out</Link>
             <ProfilePage />
           </MainContainer>
+        </Route>
+        <Route path="/forgot-password">
+          <div className="App">
+            <FormContainer>
+              <ForgotPassword />
+            </FormContainer>
+          </div>
+        </Route>
+        <Route path="/reset-password">
+          <div className="App">
+            <FormContainer>
+              <ResetPassword />
+            </FormContainer>
+          </div>
         </Route>
       </Switch>
     </BrowserRouter>
