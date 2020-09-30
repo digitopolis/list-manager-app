@@ -28,6 +28,20 @@
   color: #61dafb;
 }
 
+.button-link {
+  background: none !important;
+  border: none;
+  padding: 0 !important;
+
+  /*optional*/
+  font-family: arial, sans-serif; /*input has OS specific font-family*/
+  color: #069;
+  cursor: pointer;
+}
+.button-link:hover {
+  text-decoration: underline;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

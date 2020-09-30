@@ -1,24 +1,24 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import SignupForm from "./forms/signupForm";
+import FormContainer from "./containers/formContainer";
+import "./App.css";
+import SignInForm from "./forms/signInForm";
 
 function App() {
+  const [showSignup, toggleSignup] = useState(true);
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+      <FormContainer>
+        {showSignup ? <SignupForm /> : <SignInForm />}
+        <button
+          className="button-link"
+          onClick={() => toggleSignup(!showSignup)}
         >
-          Learn React
-        </a>
-      </header>
+          {showSignup
+            ? "Already have an account? Log in here"
+            : "New user? Sign up here"}
+        </button>
+      </FormContainer>
     </div>
   );
 }
