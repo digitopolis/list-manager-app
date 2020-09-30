@@ -1,7 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { Formik, Form, Field } from "formik";
 import { USERS } from "../apiEndpoints";
 import "./form.css";
+import { Redirect } from "react-router";
+import {
+  validateEmail,
+  validatePassword,
+  validatePasswordConfirm,
+} from "./validators";
 
 interface Values {
   email: string;
@@ -9,54 +15,36 @@ interface Values {
   passwordConfirm: string;
 }
 
-export const validateEmail = (value: string) => {
-  let error: string = "";
-  if (!value) {
-    error = "Required";
-  } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
-    error = "Invalid email address";
-  }
-  return error;
-};
-
-export const validatePassword = (password: string) => {
-  let error: string = "";
-  if (!password) {
-    error = "Required";
-  }
-  return error;
-};
-
-export const validatePasswordConfirm = (
-  password: string,
-  passwordConfirm: string
-) => {
-  let error: string = "";
-  if (!passwordConfirm) {
-    error = "Required";
-  } else if (password !== passwordConfirm) {
-    error = "Passwords must match";
-  }
-  return error;
-};
-
-const handleSubmit = (values: Values) => {
-  const { passwordConfirm, ...data } = values;
-  fetch(USERS, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-    body: JSON.stringify(data),
-  })
-    .then((res) => res.json())
-    .then(console.log);
-};
-
 const SignupForm: React.FC<{}> = () => {
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const handleSubmit = (values: Values) => {
+    const { passwordConfirm, ...data } = values;
+    fetch(USERS, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((res) => res.json())
+      .then(handleResponse);
+  };
+
+  const handleResponse = (response: {
+    user?: { email: string };
+    error?: string;
+  }) => {
+    if (response.user) {
+      setLoggedIn(true);
+    } else if (response.error) {
+      setErrorMessage("Account already registered to that email address");
+    }
+  };
   return (
     <div className="signup-form">
+      {loggedIn ? <Redirect to="/profile" /> : null}
       <h1>Sign up!</h1>
       <Formik
         initialValues={{
@@ -106,6 +94,9 @@ const SignupForm: React.FC<{}> = () => {
             ) : null}
 
             <button type="submit">Submit</button>
+            {errorMessage !== "" ? (
+              <div className="error-message">{errorMessage}</div>
+            ) : null}
           </Form>
         )}
       </Formik>
