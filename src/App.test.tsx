@@ -4,6 +4,6 @@ import App from "./App";
 
 test("renders sign up page", () => {
   const { getByText } = render(<App />);
-  const linkElement = getByText(/sign up/i);
-  expect(linkElement).toBeInTheDocument();
+  const headerElement = getByText(/sign up/i);
+  expect(headerElement).toBeInTheDocument();
 });
