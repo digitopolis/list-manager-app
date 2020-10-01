@@ -15,7 +15,8 @@ interface Values {
   passwordConfirm: string;
 }
 
-const SignupForm: React.FC<{}> = () => {
+const SignupForm: React.FC<{ signInUser: Function }> = (props) => {
+  const { signInUser } = props;
   const [loggedIn, setLoggedIn] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const handleSubmit = (values: Values) => {
@@ -37,6 +38,7 @@ const SignupForm: React.FC<{}> = () => {
     error?: string;
   }) => {
     if (response.user) {
+      signInUser(response.user);
       setLoggedIn(true);
     } else if (response.error) {
       setErrorMessage("Account already registered to that email address");
