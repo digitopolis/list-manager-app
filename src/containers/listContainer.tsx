@@ -8,7 +8,7 @@ const ListContainer: React.FC<{ lists: List[] }> = (props) => {
     <div className="list-container">
       <div>
         {lists.map((list) => {
-          return <SingleList list={list} />;
+          return <SingleList list={list} key={list.id} />;
         })}
       </div>
     </div>
