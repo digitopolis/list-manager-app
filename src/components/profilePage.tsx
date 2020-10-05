@@ -6,13 +6,15 @@ import { Item } from "../interfaces/item";
 import ListContainer from "../containers/listContainer";
 import NewListForm from "../forms/newListForm";
 import NewItemForm from "../forms/newItemForm";
+import ItemDetails from "../components/itemDetails";
 
 const ProfilePage: React.FC<{ user: User | null }> = (props) => {
   const { user } = props;
   const [lists, setLists] = useState(user ? user.lists : []);
   const [showNewListForm, toggleShowListForm] = useState(false);
   const [showNewItemForm, toggleShowItemForm] = useState(false);
-  const [showNewListForm, toggleShowForm] = useState(false);
+  const [showItemDetails, toggleShowItemDetails] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(
     user
       ? user.lists[0].items[0]
       : { id: 0, title: "", creator: "", medium: "", image_url: "", lists: [] }
@@ -53,7 +55,11 @@ const ProfilePage: React.FC<{ user: User | null }> = (props) => {
       />
     );
   };
-    return <button onClick={() => toggleShowForm(true)}>Create List</button>;
+
+  const selectItem = (item: Item) => {
+    setSelectedItem(item);
+    toggleShowItemDetails(true);
+  };
 
   const showItemButton = () => {
     return <button onClick={() => toggleShowItemForm(true)}>Add Item</button>;
@@ -63,8 +69,17 @@ const ProfilePage: React.FC<{ user: User | null }> = (props) => {
     <div className="profile-page">
       {showNewItemForm ? showItemForm() : showItemButton()}
       {showNewListForm ? showForm() : showButton()}
-      <ListContainer lists={lists} />
+
+      {showItemDetails ? (
+        <ItemDetails
+          item={selectedItem}
+          user_id={user ? user.id : 0}
+          list_id={lists[0].id}
+          updateLists={updateLists}
+        />
+      ) : (
         <ListContainer lists={lists} selectItem={selectItem} />
+      )}
     </div>
   );
 };
