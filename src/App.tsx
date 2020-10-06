@@ -8,16 +8,28 @@ import "./App.css";
 import SignInForm from "./forms/signInForm";
 import ForgotPassword from "./forms/forgotPassword";
 import ResetPassword from "./forms/resetPassword";
+import { User } from "./interfaces/user";
+
+type CurrentUser = User | null;
 
 function App() {
   const [showSignup, toggleSignup] = useState(true);
+  const [currentUser, setCurrentUser] = useState<CurrentUser>(null);
+
+  const signInUser = (user: User): void => {
+    setCurrentUser(user);
+  };
   return (
     <BrowserRouter>
       <Switch>
         <Route exact path="/">
           <div className="App">
             <FormContainer>
-              {showSignup ? <SignupForm /> : <SignInForm />}
+              {showSignup ? (
+                <SignupForm signInUser={signInUser} />
+              ) : (
+                <SignInForm signInUser={signInUser} />
+              )}
               <button
                 className="button-link"
                 onClick={() => toggleSignup(!showSignup)}
@@ -32,7 +44,7 @@ function App() {
         <Route path="/profile">
           <MainContainer>
             <Link to="/">Log out</Link>
-            <ProfilePage />
+            <ProfilePage user={currentUser} />
           </MainContainer>
         </Route>
         <Route path="/forgot-password">

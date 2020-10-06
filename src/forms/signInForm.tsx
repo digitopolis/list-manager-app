@@ -11,7 +11,8 @@ interface Values {
   password: string;
 }
 
-const SignInForm: React.FC<{}> = () => {
+const SignInForm: React.FC<{ signInUser: Function }> = (props) => {
+  const { signInUser } = props;
   const [loggedIn, setLoggedIn] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const handleSubmit = (values: Values) => {
@@ -32,6 +33,7 @@ const SignInForm: React.FC<{}> = () => {
     error?: string;
   }) => {
     if (response.user) {
+      signInUser(response.user);
       setLoggedIn(true);
     } else if (response.error) {
       setErrorMessage(response.error);

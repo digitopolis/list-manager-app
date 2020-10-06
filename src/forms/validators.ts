@@ -28,3 +28,11 @@ export const validatePasswordConfirm = (
   }
   return error;
 };
+
+export const validatePresence = (value: string) => {
+  let error: string = "";
+  if (!value) {
+    error = "Required";
+  }
+  return error;
+};
