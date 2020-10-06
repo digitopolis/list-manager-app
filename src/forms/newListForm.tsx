@@ -3,7 +3,6 @@ import { Formik, Form, Field } from "formik";
 import "./form.css";
 import { validatePresence } from "./validators";
 import { LISTS } from "../apiEndpoints";
-import { addListener } from "process";
 
 interface Values {
   title: String;

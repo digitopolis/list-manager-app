@@ -2,3 +2,24 @@
   width: 800px;
   margin: auto;
 }
+
+.placeholder-image {
+  width: 40px;
+  height: 50px;
+  background-color: gray;
+}
+
+.single-item {
+  margin-right: 5px;
+}
+
+.header-link {
+  background: none !important;
+  border: none;
+  padding: 0 !important;
+}
+
+p.subtext {
+  font-size: 0.75em;
+  color: cadetblue;
+}
