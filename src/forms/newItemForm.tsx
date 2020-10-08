@@ -4,6 +4,7 @@ import "./form.css";
 import { validatePresence } from "./validators";
 import { ITEMS } from "../apiEndpoints";
 import { List } from "../interfaces/list";
+import { Redirect } from "react-router";
 
 interface Values {
   title: String;
@@ -16,11 +17,12 @@ interface Values {
 const NewItemForm: React.FC<{
   inProgressListID: number;
   lists: List[];
-  updateLists: Function;
-  toggleShowForm: Function;
+  hideModal?: Function;
+  updateUser: Function;
 }> = (props) => {
   const [errorMessage, setErrorMessage] = useState("");
-  const { inProgressListID, lists, updateLists, toggleShowForm } = props;
+  const [submitted, setSubmitted] = useState(false);
+  const { inProgressListID, lists, hideModal, updateUser } = props;
 
   const handleSubmit = (values: Values) => {
     fetch(ITEMS, {
@@ -43,17 +45,24 @@ const NewItemForm: React.FC<{
     error?: string;
   }) => {
     if (response.item) {
-      console.log(response);
       alert(response.message);
-      updateLists(response.user);
-      toggleShowForm(false);
+      updateUser(response.user);
+      handleCancel();
+      setSubmitted(true);
     } else if (response.error) {
       setErrorMessage(response.error);
     }
   };
 
+  const handleCancel = () => {
+    if (hideModal) {
+      hideModal();
+    }
+  };
+
   return (
     <div>
+      <h1>Add new item:</h1>
       <Formik
         initialValues={{
           title: "",
@@ -66,7 +75,6 @@ const NewItemForm: React.FC<{
       >
         {({ errors, touched }) => (
           <Form className="form">
-            {" "}
             <label htmlFor="title">Title</label>
             <Field
               id="title"
@@ -111,13 +119,19 @@ const NewItemForm: React.FC<{
                 );
               })}
             </Field>
-            <button type="submit">Submit</button>
-            {errorMessage !== "" ? (
-              <div className="error-message">{errorMessage}</div>
-            ) : null}
+            <div>
+              <button type="button" onClick={() => handleCancel()}>
+                Cancel
+              </button>
+              <button type="submit">Submit</button>
+              {errorMessage !== "" ? (
+                <div className="error-message">{errorMessage}</div>
+              ) : null}
+            </div>
           </Form>
         )}
       </Formik>
+      {submitted ? <Redirect to="/profile" /> : null}
     </div>
   );
 };
