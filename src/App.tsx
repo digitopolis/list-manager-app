@@ -1,68 +1,108 @@
 import React, { useState } from "react";
-import { BrowserRouter, Switch, Route, Link } from "react-router-dom";
+import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { Layout } from "antd";
 import SignupForm from "./forms/signupForm";
 import FormContainer from "./containers/formContainer";
 import MainContainer from "./containers/mainContainer";
 import ProfilePage from "./components/profilePage";
+import Sidebar from "./components/sidebar";
 import "./App.css";
 import SignInForm from "./forms/signInForm";
 import ForgotPassword from "./forms/forgotPassword";
 import ResetPassword from "./forms/resetPassword";
 import { User } from "./interfaces/user";
+import FormModal from "./containers/formModal";
+
+const { Sider, Content } = Layout;
 
 type CurrentUser = User | null;
+type CurrentForm = React.FC | null;
 
 function App() {
   const [showSignup, toggleSignup] = useState(true);
   const [currentUser, setCurrentUser] = useState<CurrentUser>(null);
+  const [selectedForm, setSelectedForm] = useState<CurrentForm>(null);
 
   const signInUser = (user: User): void => {
     setCurrentUser(user);
   };
+
+  const signOutUser = (): void => {
+    setCurrentUser(null);
+  };
+
+  const showFormModal = (selectedForm: React.FC): JSX.Element => {
+    return (
+      <FormModal
+        formComponent={selectedForm}
+        showForm={true}
+        setSelectedForm={setSelectedForm}
+      ></FormModal>
+    );
+  };
   return (
-    <BrowserRouter>
-      <Switch>
-        <Route exact path="/">
-          <div className="App">
-            <FormContainer>
-              {showSignup ? (
-                <SignupForm signInUser={signInUser} />
-              ) : (
-                <SignInForm signInUser={signInUser} />
-              )}
-              <button
-                className="button-link"
-                onClick={() => toggleSignup(!showSignup)}
-              >
-                {showSignup
-                  ? "Already have an account? Log in here"
-                  : "New user? Sign up here"}
-              </button>
-            </FormContainer>
-          </div>
-        </Route>
-        <Route path="/profile">
-          <MainContainer>
-            <Link to="/">Log out</Link>
-            <ProfilePage user={currentUser} />
-          </MainContainer>
-        </Route>
-        <Route path="/forgot-password">
-          <div className="App">
-            <FormContainer>
-              <ForgotPassword />
-            </FormContainer>
-          </div>
-        </Route>
-        <Route path="/reset-password">
-          <div className="App">
-            <FormContainer>
-              <ResetPassword />
-            </FormContainer>
-          </div>
-        </Route>
-      </Switch>
-    </BrowserRouter>
+    <div className="body">
+      <BrowserRouter>
+        <Switch>
+          <Layout style={{ height: "100vh" }}>
+            <Sider collapsed={true} theme="light">
+              <Sidebar
+                loggedIn={currentUser ? true : false}
+                userID={currentUser ? currentUser.id : 0}
+                toggleSignup={toggleSignup}
+                selectForm={setSelectedForm}
+                signOut={signOutUser}
+                lists={currentUser ? currentUser.lists : []}
+                updateUser={setCurrentUser}
+              />
+            </Sider>
+            <Layout>
+              <Content>
+                <Route exact path="/">
+                  <div className="App">
+                    <FormContainer>
+                      {showSignup ? (
+                        <SignupForm signInUser={signInUser} />
+                      ) : (
+                        <SignInForm signInUser={signInUser} />
+                      )}
+                      <button
+                        className="button-link"
+                        onClick={() => toggleSignup(!showSignup)}
+                      >
+                        {showSignup
+                          ? "Already have an account? Log in here"
+                          : "New user? Sign up here"}
+                      </button>
+                    </FormContainer>
+                  </div>
+                </Route>
+                <Route path="/profile">
+                  <MainContainer>
+                    {selectedForm ? showFormModal(selectedForm) : null}
+                    <ProfilePage user={currentUser} />
+                  </MainContainer>
+                </Route>
+                <Route path="/forgot-password">
+                  <div className="App">
+                    <FormContainer>
+                      <ForgotPassword />
+                    </FormContainer>
+                  </div>
+                </Route>
+                <Route path="/reset-password">
+                  <div className="App">
+                    <FormContainer>
+                      <ResetPassword />
+                    </FormContainer>
+                  </div>
+                </Route>
+              </Content>
+            </Layout>
+          </Layout>
+        </Switch>
+      </BrowserRouter>
+    </div>
   );
 }
 
