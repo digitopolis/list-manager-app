@@ -5,3 +5,4 @@ export const RESET: string = "http://localhost:4000/api/v1/reset-password";
 export const LISTS: string = "http://localhost:4000/api/v1/lists";
 export const ITEMS: string = "http://localhost:4000/api/v1/items";
 export const COMPLETE: string = "http://localhost:4000/api/v1/mark-complete";
+export const ADD_TO_LIST: string = "http://localhost:4000/api/v1/add-to-list";

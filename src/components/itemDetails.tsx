@@ -1,17 +1,32 @@
 import React, { useState } from "react";
 import { Item } from "../interfaces/item";
-import { COMPLETE } from "../apiEndpoints";
+import { COMPLETE, ADD_TO_LIST } from "../apiEndpoints";
+import { Button } from "antd";
+import { LeftOutlined } from "@ant-design/icons";
+import { Formik, Form, Field } from "formik";
+import { List } from "../interfaces/list";
+import { Redirect } from "react-router";
+
+interface Values {
+  list_id: number;
+  item_id: number;
+}
 
 const ItemDetails: React.FC<{
   item: Item;
   list_id: number;
   user_id: number;
-  updateLists: Function;
+  selectItem: Function;
+  lists: List[];
+  updateUser: Function;
+  // updateLists: Function;
 }> = (props) => {
   const { id, title, creator, medium } = props.item;
-  const { list_id, user_id, updateLists } = props;
+  const { list_id, user_id, selectItem, lists, updateUser } = props;
   const [errorMessage, setErrorMessage] = useState("");
-  const handleSubmit = () => {
+  const [submitted, setSubmitted] = useState(false);
+
+  const markCompleted = () => {
     const data = {
       item_id: id,
       list_id: list_id,
@@ -29,31 +44,71 @@ const ItemDetails: React.FC<{
       .then(handleResponse);
   };
 
+  const addToList = (values: Values) => {
+    fetch(ADD_TO_LIST, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(values),
+    })
+      .then((res) => res.json())
+      .then(handleResponse);
+  };
+
   const handleResponse = (response: {
     user?: {};
     message?: string;
     error?: string;
   }) => {
     if (response.user) {
-      console.log(response);
       alert(response.message);
-      updateLists(response.user);
+      updateUser(response.user);
+      setSubmitted(true);
     } else if (response.error) {
       setErrorMessage(response.error);
     }
   };
   return (
     <div className="item-details">
+      <Button icon={<LeftOutlined />} onClick={() => selectItem(null)} />
       <div>
         <h1>{title}</h1>
-        <div className="placeholder-image"></div>
+        <div className="placeholder-image-large"></div>
         <p>By {creator}</p>
         <p className="subtext">{medium}</p>
       </div>
-      <button onClick={handleSubmit}>Completed</button>
+      <button onClick={markCompleted}>Completed</button>
       {errorMessage !== "" ? (
         <div className="error-message">{errorMessage}</div>
       ) : null}
+      <div>
+        <Formik
+          initialValues={{ item_id: id, list_id: lists[0].id }}
+          onSubmit={(values: Values) => addToList(values)}
+        >
+          <Form>
+            <label htmlFor="list_id">Add to list:</label>
+            <Field id="list_id" name="list_id" as="select">
+              {lists.map((list) => {
+                return (
+                  <option value={list.id} key={list.id}>
+                    {list.title}
+                  </option>
+                );
+              })}
+            </Field>
+            <div>
+              <button type="submit">Submit</button>
+              {errorMessage !== "" ? (
+                <div className="error-message">{errorMessage}</div>
+              ) : null}
+            </div>
+          </Form>
+        </Formik>
+      </div>
+      {submitted ? <Redirect to="/profile" /> : null}
     </div>
   );
 };
