@@ -6,6 +6,7 @@ import { LeftOutlined } from "@ant-design/icons";
 import { Formik, Form, Field } from "formik";
 import { List } from "../interfaces/list";
 import { Redirect } from "react-router";
+import "./components.css";
 
 interface Values {
   list_id: number;
@@ -17,12 +18,12 @@ const ItemDetails: React.FC<{
   list_id: number;
   user_id: number;
   selectItem: Function;
-  lists: List[];
+  userLists: List[];
   updateUser: Function;
   // updateLists: Function;
 }> = (props) => {
-  const { id, title, creator, medium } = props.item;
-  const { list_id, user_id, selectItem, lists, updateUser } = props;
+  const { id, title, creator, medium, lists } = props.item;
+  const { list_id, user_id, selectItem, userLists, updateUser } = props;
   const [errorMessage, setErrorMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
@@ -84,14 +85,26 @@ const ItemDetails: React.FC<{
         <div className="error-message">{errorMessage}</div>
       ) : null}
       <div>
+        <h2>Currently in these lists:</h2>
+        <ul className="item-lists">
+          {lists.map((list) => {
+            return (
+              <li className="item-list-title">
+                <h3>{list.title}</h3>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+      <div>
         <Formik
-          initialValues={{ item_id: id, list_id: lists[0].id }}
+          initialValues={{ item_id: id, list_id: userLists[0].id }}
           onSubmit={(values: Values) => addToList(values)}
         >
           <Form>
             <label htmlFor="list_id">Add to list:</label>
             <Field id="list_id" name="list_id" as="select">
-              {lists.map((list) => {
+              {userLists.map((list) => {
                 return (
                   <option value={list.id} key={list.id}>
                     {list.title}

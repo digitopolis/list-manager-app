@@ -21,11 +21,11 @@ const SingleItem: React.FC<{ item: Item; selectItem: Function }> = ({
         <Redirect to="/item-details" />
       ) : (
         <>
-          <h4>
+          <h3>
             <button className="header-link" onClick={handleItemSelect}>
               {title}
             </button>
-          </h4>
+          </h3>
           <div className="placeholder-image"></div>
           <p>{creator}</p>
           <p className="subtext">{medium}</p>

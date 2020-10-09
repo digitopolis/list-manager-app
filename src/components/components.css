@@ -37,9 +37,20 @@ p.subhead {
 }
 
 h1.list-title {
-  font-size: 5em;
+  font-size: 2.5em;
   font-weight: bold;
   letter-spacing: -0.5;
+  margin-bottom: 0;
+}
+
+ul.item-lists {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+li.item-list-title {
+  margin: 0;
 }
 
 .sidebar {
