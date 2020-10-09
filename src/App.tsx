@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import { Layout } from "antd";
 import SignupForm from "./forms/signupForm";
 import FormContainer from "./containers/formContainer";
@@ -12,16 +12,20 @@ import ForgotPassword from "./forms/forgotPassword";
 import ResetPassword from "./forms/resetPassword";
 import { User } from "./interfaces/user";
 import FormModal from "./containers/formModal";
+import { Item } from "./interfaces/item";
+import ItemDetails from "./components/itemDetails";
 
 const { Sider, Content } = Layout;
 
 type CurrentUser = User | null;
 type CurrentForm = React.FC | null;
+type CurrentItem = Item | null;
 
 function App() {
   const [showSignup, toggleSignup] = useState(true);
   const [currentUser, setCurrentUser] = useState<CurrentUser>(null);
   const [selectedForm, setSelectedForm] = useState<CurrentForm>(null);
+  const [currentItem, setCurrentItem] = useState<CurrentItem>(null);
 
   const signInUser = (user: User): void => {
     setCurrentUser(user);
@@ -80,7 +84,10 @@ function App() {
                 <Route path="/profile">
                   <MainContainer>
                     {selectedForm ? showFormModal(selectedForm) : null}
-                    <ProfilePage user={currentUser} />
+                    <ProfilePage
+                      user={currentUser}
+                      selectItem={setCurrentItem}
+                    />
                   </MainContainer>
                 </Route>
                 <Route path="/forgot-password">
@@ -96,6 +103,22 @@ function App() {
                       <ResetPassword />
                     </FormContainer>
                   </div>
+                </Route>
+                <Route path="/item-details">
+                  <MainContainer>
+                    {currentItem && currentUser ? (
+                      <ItemDetails
+                        item={currentItem}
+                        list_id={currentUser.lists[0].id}
+                        user_id={currentUser.id}
+                        selectItem={setCurrentItem}
+                        lists={currentUser.lists}
+                        updateUser={setCurrentUser}
+                      />
+                    ) : (
+                      <Redirect to="/profile" />
+                    )}
+                  </MainContainer>
                 </Route>
               </Content>
             </Layout>
