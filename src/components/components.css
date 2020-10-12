@@ -1,5 +1,6 @@
 .profile-page {
-  width: 800px;
+  width: 100%;
+  padding: 2em;
   margin: auto;
 }
 
@@ -22,4 +23,14 @@
 p.subtext {
   font-size: 0.75em;
   color: cadetblue;
+}
+
+.sidebar {
+  height: 100% !important;
+  width: 256;
+}
+
+.icon {
+  width: 35px;
+  height: 35px;
 }
