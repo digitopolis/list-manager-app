@@ -20,9 +20,8 @@ const ItemDetails: React.FC<{
   selectItem: Function;
   userLists: List[];
   updateUser: Function;
-  // updateLists: Function;
 }> = (props) => {
-  const { id, title, creator, medium, lists } = props.item;
+  const { id, title, creator, medium, lists, image_url, tags } = props.item;
   const { list_id, user_id, selectItem, userLists, updateUser } = props;
   const [errorMessage, setErrorMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -71,19 +70,38 @@ const ItemDetails: React.FC<{
       setErrorMessage(response.error);
     }
   };
+  const isInProgress = (): boolean => {
+    if (lists.find((list) => list.title === "In Progress")) {
+      return true;
+    }
+    return false;
+  };
+
+  const completedButton = () => {
+    return (
+      <div>
+        <button onClick={markCompleted}>Completed</button>
+        {errorMessage !== "" ? (
+          <div className="error-message">{errorMessage}</div>
+        ) : null}
+      </div>
+    );
+  };
+
   return (
     <div className="item-details">
       <Button icon={<LeftOutlined />} onClick={() => selectItem(null)} />
       <div>
         <h1>{title}</h1>
-        <div className="placeholder-image-large"></div>
+        {image_url ? (
+          <img className="image-large" src={image_url} alt="Cover" />
+        ) : (
+          <div className="placeholder-image-large"></div>
+        )}
         <p>By {creator}</p>
         <p className="subtext">{medium}</p>
       </div>
-      <button onClick={markCompleted}>Completed</button>
-      {errorMessage !== "" ? (
-        <div className="error-message">{errorMessage}</div>
-      ) : null}
+      {isInProgress() ? completedButton() : null}
       <div>
         <h2>Currently in these lists:</h2>
         <ul className="item-lists">
