@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { Item } from "../interfaces/item";
 import { COMPLETE, ADD_TO_LIST } from "../apiEndpoints";
-import { Button } from "antd";
+import { Button, Tag } from "antd";
 import { LeftOutlined } from "@ant-design/icons";
 import { Formik, Form, Field } from "formik";
 import { List } from "../interfaces/list";
 import { Redirect } from "react-router";
+import "./components.css";
+import { colors } from "../tagColors";
 
 interface Values {
   list_id: number;
@@ -17,12 +19,11 @@ const ItemDetails: React.FC<{
   list_id: number;
   user_id: number;
   selectItem: Function;
-  lists: List[];
+  userLists: List[];
   updateUser: Function;
-  // updateLists: Function;
 }> = (props) => {
-  const { id, title, creator, medium } = props.item;
-  const { list_id, user_id, selectItem, lists, updateUser } = props;
+  const { id, title, creator, medium, lists, image_url, tags } = props.item;
+  const { list_id, user_id, selectItem, userLists, updateUser } = props;
   const [errorMessage, setErrorMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
@@ -70,28 +71,75 @@ const ItemDetails: React.FC<{
       setErrorMessage(response.error);
     }
   };
+
+  const generateTag = (tag: string) => {
+    let color = "";
+    if (Object.keys(colors).includes(tag)) {
+      color = colors[tag];
+    } else {
+      color = colors["Custom"];
+    }
+    return <Tag color={color}>{tag}</Tag>;
+  };
+
+  const isInProgress = (): boolean => {
+    if (lists.find((list) => list.title === "In Progress")) {
+      return true;
+    }
+    return false;
+  };
+
+  const completedButton = () => {
+    return (
+      <div>
+        <button onClick={markCompleted}>Completed</button>
+        {errorMessage !== "" ? (
+          <div className="error-message">{errorMessage}</div>
+        ) : null}
+      </div>
+    );
+  };
+
   return (
     <div className="item-details">
       <Button icon={<LeftOutlined />} onClick={() => selectItem(null)} />
       <div>
         <h1>{title}</h1>
-        <div className="placeholder-image-large"></div>
+        <div>
+          {tags.map((tag) => {
+            return generateTag(tag);
+          })}
+        </div>
+        {image_url ? (
+          <img className="image-large" src={image_url} alt="Cover" />
+        ) : (
+          <div className="placeholder-image-large"></div>
+        )}
         <p>By {creator}</p>
         <p className="subtext">{medium}</p>
       </div>
-      <button onClick={markCompleted}>Completed</button>
-      {errorMessage !== "" ? (
-        <div className="error-message">{errorMessage}</div>
-      ) : null}
+      {isInProgress() ? completedButton() : null}
+      <div>
+        <h2>Currently in these lists:</h2>
+        <ul className="item-lists">
+          {lists.map((list) => {
+            return (
+              <li className="item-list-title">
+                <h3>{list.title}</h3>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
       <div>
         <Formik
-          initialValues={{ item_id: id, list_id: lists[0].id }}
+          initialValues={{ item_id: id, list_id: userLists[0].id }}
           onSubmit={(values: Values) => addToList(values)}
         >
           <Form>
             <label htmlFor="list_id">Add to list:</label>
             <Field id="list_id" name="list_id" as="select">
-              {lists.map((list) => {
+              {userLists.map((list) => {
                 return (
                   <option value={list.id} key={list.id}>
                     {list.title}

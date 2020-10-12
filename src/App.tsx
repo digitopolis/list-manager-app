@@ -112,7 +112,7 @@ function App() {
                         list_id={currentUser.lists[0].id}
                         user_id={currentUser.id}
                         selectItem={setCurrentItem}
-                        lists={currentUser.lists}
+                        userLists={currentUser.lists}
                         updateUser={setCurrentUser}
                       />
                     ) : (
