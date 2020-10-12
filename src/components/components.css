@@ -16,7 +16,16 @@
   background-color: gray;
 }
 
+.image-small {
+  width: 80px;
+}
+
+.image-large {
+  width: 400px;
+}
+
 .single-item {
+  width: 180px;
   margin-right: 5px;
 }
 
@@ -67,4 +76,8 @@ li.item-list-title {
   width: 100%;
   padding: 2em;
   margin: auto;
+}
+
+.tag-container {
+  width: 150px;
 }

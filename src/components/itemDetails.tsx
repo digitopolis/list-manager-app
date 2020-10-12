@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { Item } from "../interfaces/item";
 import { COMPLETE, ADD_TO_LIST } from "../apiEndpoints";
-import { Button } from "antd";
+import { Button, Tag } from "antd";
 import { LeftOutlined } from "@ant-design/icons";
 import { Formik, Form, Field } from "formik";
 import { List } from "../interfaces/list";
 import { Redirect } from "react-router";
 import "./components.css";
+import { colors } from "../tagColors";
 
 interface Values {
   list_id: number;
@@ -70,6 +71,17 @@ const ItemDetails: React.FC<{
       setErrorMessage(response.error);
     }
   };
+
+  const generateTag = (tag: string) => {
+    let color = "";
+    if (Object.keys(colors).includes(tag)) {
+      color = colors[tag];
+    } else {
+      color = colors["Custom"];
+    }
+    return <Tag color={color}>{tag}</Tag>;
+  };
+
   const isInProgress = (): boolean => {
     if (lists.find((list) => list.title === "In Progress")) {
       return true;
@@ -93,6 +105,11 @@ const ItemDetails: React.FC<{
       <Button icon={<LeftOutlined />} onClick={() => selectItem(null)} />
       <div>
         <h1>{title}</h1>
+        <div>
+          {tags.map((tag) => {
+            return generateTag(tag);
+          })}
+        </div>
         {image_url ? (
           <img className="image-large" src={image_url} alt="Cover" />
         ) : (
