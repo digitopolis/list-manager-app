@@ -12,6 +12,8 @@ interface Values {
   image_url: String;
   medium: String;
   list_id: Number;
+  tags: String[];
+  custom_tag: String;
 }
 
 const NewItemForm: React.FC<{
@@ -25,13 +27,17 @@ const NewItemForm: React.FC<{
   const { inProgressListID, lists, hideModal, updateUser } = props;
 
   const handleSubmit = (values: Values) => {
+    const { custom_tag, ...data } = values;
+    if (custom_tag) {
+      data.tags = [...data.tags, custom_tag];
+    }
     fetch(ITEMS, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
       },
-      body: JSON.stringify(values),
+      body: JSON.stringify(data),
     })
       .then((res) => res.json())
       .then(handleResponse);
@@ -70,6 +76,8 @@ const NewItemForm: React.FC<{
           medium: "",
           image_url: "",
           list_id: inProgressListID,
+          tags: [],
+          custom_tag: "",
         }}
         onSubmit={(values: Values) => handleSubmit(values)}
       >
@@ -108,6 +116,40 @@ const NewItemForm: React.FC<{
               name="image_url"
               type="image_url"
               placeholder="Image URL"
+            />
+            <div>Genres:</div>
+            <div role="group" aria-labelledby="checkbox-group">
+              <label>
+                <Field type="checkbox" name="tags" value="Comedy" />
+                Comedy
+              </label>
+              <label>
+                <Field type="checkbox" name="tags" value="Drama" />
+                Drama
+              </label>
+              <label>
+                <Field type="checkbox" name="tags" value="Action" />
+                Action
+              </label>
+              <label>
+                <Field type="checkbox" name="tags" value="Horror" />
+                Horror
+              </label>
+              <label>
+                <Field type="checkbox" name="tags" value="Mystery" />
+                Mystery
+              </label>
+              <label>
+                <Field type="checkbox" name="tags" value="Non-Fiction" />
+                Non-Fiction
+              </label>
+            </div>
+            <label htmlFor="custom_tag">Add a tag</label>
+            <Field
+              id="custom_tag"
+              name="custom_tag"
+              type="custom_tag"
+              placeholder="Custom Tag"
             />
             <label htmlFor="list_id">Choose a list:</label>
             <Field id="list_id" name="list_id" as="select">
