@@ -14,6 +14,7 @@ import { User } from "./interfaces/user";
 import FormModal from "./containers/formModal";
 import { Item } from "./interfaces/item";
 import ItemDetails from "./components/itemDetails";
+import StatsPage from "./components/statsPage";
 
 const { Sider, Content } = Layout;
 
@@ -117,6 +118,15 @@ function App() {
                       />
                     ) : (
                       <Redirect to="/profile" />
+                    )}
+                  </MainContainer>
+                </Route>
+                <Route path="/user-stats">
+                  <MainContainer>
+                    {currentUser ? (
+                      <StatsPage user={currentUser} />
+                    ) : (
+                      <Redirect to="/" />
                     )}
                   </MainContainer>
                 </Route>

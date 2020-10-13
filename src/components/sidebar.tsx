@@ -6,6 +6,7 @@ import {
   UserOutlined,
   UnorderedListOutlined,
   FileAddOutlined,
+  PieChartOutlined,
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import NewListForm from "../forms/newListForm";
@@ -83,6 +84,9 @@ const Sidebar: React.FC<{
           }
         >
           Add Item
+        </Item>
+        <Item key="6" icon={<PieChartOutlined />}>
+          <Link to="/user-stats">Stats</Link>
         </Item>
       </Menu>
     </div>
