@@ -81,3 +81,9 @@ li.item-list-title {
 .tag-container {
   width: 150px;
 }
+
+.stats {
+  width: 100%;
+  margin: auto;
+  padding: 2em;
+}
