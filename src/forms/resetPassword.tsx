@@ -8,6 +8,7 @@ import {
   validatePassword,
   validatePasswordConfirm,
 } from "./validators";
+import { Button } from "antd";
 
 interface Values {
   email: string;
@@ -95,8 +96,11 @@ const ResetPassword: React.FC<{}> = () => {
             {errors.passwordConfirm && touched.passwordConfirm ? (
               <div className="error-message">{errors.passwordConfirm}</div>
             ) : null}
-
-            <button type="submit">Submit</button>
+            <div className="button-div">
+              <Button type="primary" htmlType="submit">
+                Submit
+              </Button>
+            </div>
             {errorMessage !== "" ? (
               <div className="error-message">{errorMessage}</div>
             ) : null}

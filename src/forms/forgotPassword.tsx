@@ -4,6 +4,7 @@ import "./form.css";
 import { validateEmail } from "./validators";
 import { FORGOT } from "../apiEndpoints";
 import { Redirect } from "react-router";
+import { Button } from "antd";
 
 interface Values {
   email: string;
@@ -59,8 +60,11 @@ const ForgotPassword: React.FC<{}> = () => {
             {errors.email && touched.email ? (
               <div className="error-message">{errors.email}</div>
             ) : null}
-
-            <button type="submit">Submit</button>
+            <div className="button-div">
+              <Button type="primary" htmlType="submit">
+                Submit
+              </Button>
+            </div>
             {errorMessage !== "" ? (
               <div className="error-message">{errorMessage}</div>
             ) : null}

@@ -5,6 +5,7 @@ import { validateEmail, validatePassword } from "./validators";
 import { LOGIN } from "../apiEndpoints";
 import { Redirect } from "react-router";
 import { Link } from "react-router-dom";
+import { Button } from "antd";
 
 interface Values {
   email: string;
@@ -75,8 +76,11 @@ const SignInForm: React.FC<{ signInUser: Function }> = (props) => {
             {errors.password && touched.password ? (
               <div className="error-message">{errors.password}</div>
             ) : null}
-
-            <button type="submit">Submit</button>
+            <div className="button-div">
+              <Button type="primary" htmlType="submit">
+                Submit
+              </Button>
+            </div>
             {errorMessage !== "" ? (
               <div className="error-message">{errorMessage}</div>
             ) : null}
