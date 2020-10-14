@@ -45,22 +45,28 @@ function App() {
       ></FormModal>
     );
   };
+
+  const showSidebar = (): JSX.Element => {
+    return (
+      <Sider collapsed={true} theme="light">
+        <Sidebar
+          loggedIn={currentUser ? true : false}
+          userID={currentUser ? currentUser.id : 0}
+          toggleSignup={toggleSignup}
+          selectForm={setSelectedForm}
+          signOut={signOutUser}
+          lists={currentUser ? currentUser.lists : []}
+          updateUser={setCurrentUser}
+        />
+      </Sider>
+    );
+  };
   return (
     <div className="body">
       <BrowserRouter>
         <Switch>
           <Layout style={{ height: "100vh" }}>
-            <Sider collapsed={true} theme="light">
-              <Sidebar
-                loggedIn={currentUser ? true : false}
-                userID={currentUser ? currentUser.id : 0}
-                toggleSignup={toggleSignup}
-                selectForm={setSelectedForm}
-                signOut={signOutUser}
-                lists={currentUser ? currentUser.lists : []}
-                updateUser={setCurrentUser}
-              />
-            </Sider>
+            {currentUser ? showSidebar() : null}
             <Layout>
               <Content>
                 <Route exact path="/">
