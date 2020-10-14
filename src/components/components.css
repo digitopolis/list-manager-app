@@ -18,6 +18,7 @@
 
 .image-small {
   width: 80px;
+  cursor: pointer;
 }
 
 .image-large {
@@ -33,6 +34,7 @@
   background: none !important;
   border: none;
   padding: 0 !important;
+  cursor: pointer;
 }
 
 p.subtext {
