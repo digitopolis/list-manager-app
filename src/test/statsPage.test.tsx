@@ -4,7 +4,8 @@ import { User } from "../interfaces/user";
 import {
   getGenresHash,
   GenreHash,
-  constructData,
+  constructGenreData,
+  constructMediaData,
 } from "../utilities/statsPageHelpers";
 import { Colors } from "../tagColors";
 
@@ -46,7 +47,7 @@ const testUser: User = {
           id: 1,
           title: "My Item Title",
           creator: "me",
-          medium: "Podcast",
+          medium: "Book",
           image_url: "",
           lists: [],
           tags: ["Drama", "Mystery"],
@@ -65,7 +66,7 @@ const testUser: User = {
   ],
 };
 
-test("generates genre : ammount hashmap", () => {
+test("generates genre : amount hashmap", () => {
   const completed = testUser.lists.find((list) => list.title === "Completed");
   if (completed) {
     const genresMap: GenreHash = getGenresHash(completed);
@@ -74,17 +75,29 @@ test("generates genre : ammount hashmap", () => {
   }
 });
 
-test("constructs data object with data and labels in correct order", () => {
+test("constructs genre data object with data and labels in correct order", () => {
   const completed = testUser.lists[1];
-  const data = constructData(completed);
+  const data = constructGenreData(completed);
 
   expect(data.datasets[0].data.indexOf(3)).toBe(data.labels.indexOf("Mystery"));
 });
 
-test("constructs data object with colors", () => {
+test("constructs genre data object with colors", () => {
   const completed = testUser.lists[1];
-  const data = constructData(completed);
+  const data = constructGenreData(completed);
   const mysteryIdx = data.labels.indexOf("Mystery");
 
   expect(data.datasets[0].backgroundColor[mysteryIdx]).toBe(Colors["Mystery"]);
+});
+
+test("constructs media data object with label", () => {
+  const completed = testUser.lists[1];
+  const data = constructMediaData(completed);
+  expect(data.datasets[0].label).toBe("Favorite Media");
+});
+
+test("constructs type data object with data and labels in correct order", () => {
+  const completed = testUser.lists[1];
+  const data = constructMediaData(completed);
+  expect(data.datasets[0].data.indexOf(2)).toBe(data.labels.indexOf("Book"));
 });

@@ -5,8 +5,12 @@ export interface GenreHash {
   [genre: string]: number;
 }
 
+interface MediaHash {
+  [medium: string]: number;
+}
+
 export interface DataObject {
-  datasets: { data: number[]; backgroundColor: string[] }[];
+  datasets: { data: number[]; backgroundColor: string[]; label?: string }[];
   labels: string[];
 }
 
@@ -20,7 +24,15 @@ export const getGenresHash = (list: List): GenreHash => {
   return genreHash;
 };
 
-export const constructData = (list: List) => {
+const getMediaHash = (list: List) => {
+  const mediaHash: MediaHash = {};
+  list.items.map((item) => {
+    mediaHash[item.medium] = mediaHash[item.medium] + 1 || 1;
+  });
+  return mediaHash;
+};
+
+export const constructGenreData = (list: List) => {
   const genreHash = getGenresHash(list);
   const data: DataObject = { datasets: [], labels: [] };
   data.labels = Object.keys(genreHash);
@@ -36,5 +48,27 @@ export const constructData = (list: List) => {
   data.datasets = [
     { data: Object.values(genreHash), backgroundColor: bgColors },
   ];
+  return data;
+};
+
+export const constructMediaData = (list: List) => {
+  const mediaHash = getMediaHash(list);
+  const data: DataObject = {
+    datasets: [
+      {
+        label: "Favorite Media",
+        data: Object.values(mediaHash),
+        backgroundColor: [],
+      },
+    ],
+    labels: Object.keys(mediaHash),
+  };
+  const bgColors = data.labels.map((label) => {
+    return `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(
+      Math.random() * 255
+    )}, ${Math.floor(Math.random() * 255)}, 0.75)`;
+  });
+  data.datasets[0].backgroundColor = bgColors;
+
   return data;
 };
