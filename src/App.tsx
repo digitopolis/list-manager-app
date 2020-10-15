@@ -15,12 +15,15 @@ import FormModal from "./containers/formModal";
 import { Item } from "./interfaces/item";
 import ItemDetails from "./components/itemDetails";
 import StatsPage from "./components/statsPage";
+import { List } from "./interfaces/list";
+import ListView from "./components/listView";
 
 const { Sider, Content, Header } = Layout;
 
 type CurrentUser = User | null;
 type CurrentForm = React.FC | null;
 type CurrentItem = Item | null;
+type CurrentList = List | null;
 
 const getWidth = (): number =>
   window.innerWidth ||
@@ -32,6 +35,7 @@ function App() {
   const [currentUser, setCurrentUser] = useState<CurrentUser>(null);
   const [selectedForm, setSelectedForm] = useState<CurrentForm>(null);
   const [currentItem, setCurrentItem] = useState<CurrentItem>(null);
+  const [currentList, setCurrentList] = useState<CurrentList>(null);
   const [windowWidth, setWindowWidth] = useState(getWidth());
 
   useEffect(() => {
@@ -138,6 +142,7 @@ function App() {
                     <ProfilePage
                       user={currentUser}
                       selectItem={setCurrentItem}
+                      selectList={setCurrentList}
                     />
                   </MainContainer>
                 </Route>
@@ -179,6 +184,20 @@ function App() {
                       <StatsPage user={currentUser} />
                     ) : (
                       <Redirect to="/" />
+                    )}
+                  </MainContainer>
+                </Route>
+                <Route path="/list-view">
+                  <MainContainer>
+                    {selectedForm ? showFormModal(selectedForm) : null}
+                    {currentList && currentUser ? (
+                      <ListView
+                        list={currentList}
+                        selectItem={setCurrentItem}
+                        selectList={setCurrentList}
+                      />
+                    ) : (
+                      <Redirect to="/profile" />
                     )}
                   </MainContainer>
                 </Route>
