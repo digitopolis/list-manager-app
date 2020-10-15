@@ -1,17 +1,34 @@
 import React, { useState } from "react";
 import { Item } from "../interfaces/item";
-import { COMPLETE } from "../apiEndpoints";
+import { COMPLETE, ADD_TO_LIST } from "../apiEndpoints";
+import { Button, Tag } from "antd";
+import { LeftOutlined } from "@ant-design/icons";
+import { Formik, Form, Field } from "formik";
+import { List } from "../interfaces/list";
+import { Redirect } from "react-router";
+import "./components.css";
+import "../forms/form.css";
+import { Colors } from "../tagColors";
+
+interface Values {
+  list_id: number;
+  item_id: number;
+}
 
 const ItemDetails: React.FC<{
   item: Item;
   list_id: number;
   user_id: number;
-  updateLists: Function;
+  selectItem: Function;
+  userLists: List[];
+  updateUser: Function;
 }> = (props) => {
-  const { id, title, creator, medium } = props.item;
-  const { list_id, user_id, updateLists } = props;
+  const { id, title, creator, medium, lists, image_url, tags } = props.item;
+  const { list_id, user_id, selectItem, userLists, updateUser } = props;
   const [errorMessage, setErrorMessage] = useState("");
-  const handleSubmit = () => {
+  const [submitted, setSubmitted] = useState(false);
+
+  const markCompleted = () => {
     const data = {
       item_id: id,
       list_id: list_id,
@@ -29,31 +46,126 @@ const ItemDetails: React.FC<{
       .then(handleResponse);
   };
 
+  const addToList = (values: Values) => {
+    fetch(ADD_TO_LIST, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(values),
+    })
+      .then((res) => res.json())
+      .then(handleResponse);
+  };
+
   const handleResponse = (response: {
     user?: {};
     message?: string;
     error?: string;
   }) => {
     if (response.user) {
-      console.log(response);
       alert(response.message);
-      updateLists(response.user);
+      updateUser(response.user);
+      setSubmitted(true);
     } else if (response.error) {
       setErrorMessage(response.error);
     }
   };
+
+  const generateTag = (tag: string) => {
+    let color = "";
+    if (Object.keys(Colors).includes(tag)) {
+      color = Colors[tag];
+    } else {
+      color = Colors["Custom"];
+    }
+    return <Tag color={color}>{tag}</Tag>;
+  };
+
+  const isInProgress = (): boolean => {
+    if (lists.find((list) => list.title === "In Progress")) {
+      return true;
+    }
+    return false;
+  };
+
+  const completedButton = () => {
+    return (
+      <div>
+        <div className="button-div">
+          <Button type="primary" htmlType="submit" onClick={markCompleted}>
+            Completed
+          </Button>
+        </div>
+        {errorMessage !== "" ? (
+          <div className="error-message">{errorMessage}</div>
+        ) : null}
+      </div>
+    );
+  };
+
   return (
     <div className="item-details">
+      <Button icon={<LeftOutlined />} onClick={() => selectItem(null)} />
       <div>
         <h1>{title}</h1>
-        <div className="placeholder-image"></div>
+        <div>
+          {tags.map((tag) => {
+            return generateTag(tag);
+          })}
+        </div>
+        {image_url ? (
+          <img className="image-large" src={image_url} alt="Cover" />
+        ) : (
+          <div className="placeholder-image-large"></div>
+        )}
         <p>By {creator}</p>
         <p className="subtext">{medium}</p>
       </div>
-      <button onClick={handleSubmit}>Completed</button>
-      {errorMessage !== "" ? (
-        <div className="error-message">{errorMessage}</div>
-      ) : null}
+      {isInProgress() ? completedButton() : null}
+      <div>
+        <h2>Currently in these lists:</h2>
+        <ul className="item-lists">
+          {lists.map((list) => {
+            return (
+              <li className="item-list-title">
+                <h3>{list.title}</h3>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+      <div>
+        <Formik
+          initialValues={{ item_id: id, list_id: userLists[0].id }}
+          onSubmit={(values: Values) => addToList(values)}
+        >
+          <Form>
+            <label htmlFor="list_id">Add to list:</label>
+            <Field id="list_id" name="list_id" as="select">
+              {userLists.map((list) => {
+                return (
+                  <option value={list.id} key={list.id}>
+                    {list.title}
+                  </option>
+                );
+              })}
+            </Field>
+            <div>
+              <div className="button-div">
+                <Button type="primary" htmlType="submit">
+                  Submit
+                </Button>
+              </div>
+              {errorMessage !== "" ? (
+                <div className="error-message">{errorMessage}</div>
+              ) : null}
+            </div>
+          </Form>
+        </Formik>
+      </div>
+      {submitted ? <Redirect to="/profile" /> : null}
     </div>
   );
 };

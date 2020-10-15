@@ -7,4 +7,5 @@ export interface Item {
   medium: string;
   image_url: string;
   lists: List[];
+  tags: string[];
 }

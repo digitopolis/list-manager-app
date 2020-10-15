@@ -16,3 +16,7 @@ input {
   color: firebrick;
   font-size: 0.75em;
 }
+
+.button-div {
+  margin: 1em;
+}
