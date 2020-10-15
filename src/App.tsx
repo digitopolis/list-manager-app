@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import { Layout } from "antd";
 import SignupForm from "./forms/signupForm";
 import FormContainer from "./containers/formContainer";
 import MainContainer from "./containers/mainContainer";
 import ProfilePage from "./components/profilePage";
-import Sidebar from "./components/sidebar";
+import MenuBar from "./components/menuBar";
 import "./App.css";
 import SignInForm from "./forms/signInForm";
 import ForgotPassword from "./forms/forgotPassword";
@@ -14,18 +14,35 @@ import { User } from "./interfaces/user";
 import FormModal from "./containers/formModal";
 import { Item } from "./interfaces/item";
 import ItemDetails from "./components/itemDetails";
+import StatsPage from "./components/statsPage";
 
-const { Sider, Content } = Layout;
+const { Sider, Content, Header } = Layout;
 
 type CurrentUser = User | null;
 type CurrentForm = React.FC | null;
 type CurrentItem = Item | null;
+
+const getWidth = (): number =>
+  window.innerWidth ||
+  document.documentElement.clientWidth ||
+  document.body.clientWidth;
 
 function App() {
   const [showSignup, toggleSignup] = useState(true);
   const [currentUser, setCurrentUser] = useState<CurrentUser>(null);
   const [selectedForm, setSelectedForm] = useState<CurrentForm>(null);
   const [currentItem, setCurrentItem] = useState<CurrentItem>(null);
+  const [windowWidth, setWindowWidth] = useState(getWidth());
+
+  useEffect(() => {
+    const resizeListener = () => {
+      setWindowWidth(getWidth());
+    };
+    window.addEventListener("resize", resizeListener);
+    return () => {
+      window.removeEventListener("resize", resizeListener);
+    };
+  }, []);
 
   const signInUser = (user: User): void => {
     setCurrentUser(user);
@@ -44,22 +61,56 @@ function App() {
       ></FormModal>
     );
   };
+
+  const showSidebar = (): JSX.Element => {
+    return (
+      <Sider collapsed={true} theme="light">
+        <MenuBar
+          loggedIn={currentUser ? true : false}
+          userID={currentUser ? currentUser.id : 0}
+          toggleSignup={toggleSignup}
+          selectForm={setSelectedForm}
+          signOut={signOutUser}
+          lists={currentUser ? currentUser.lists : []}
+          updateUser={setCurrentUser}
+          mode={"inline"}
+          width={50}
+        />
+      </Sider>
+    );
+  };
+
+  const showHeader = (): JSX.Element => {
+    return (
+      <Header style={{ background: "#fff" }}>
+        <MenuBar
+          loggedIn={currentUser ? true : false}
+          userID={currentUser ? currentUser.id : 0}
+          toggleSignup={toggleSignup}
+          selectForm={setSelectedForm}
+          signOut={signOutUser}
+          lists={currentUser ? currentUser.lists : []}
+          updateUser={setCurrentUser}
+          mode={"horizontal"}
+        />
+      </Header>
+    );
+  };
+
+  const showHeaderOrSidebar = (): JSX.Element => {
+    if (windowWidth > 767) {
+      return showSidebar();
+    } else {
+      return showHeader();
+    }
+  };
+
   return (
     <div className="body">
       <BrowserRouter>
         <Switch>
           <Layout style={{ height: "100vh" }}>
-            <Sider collapsed={true} theme="light">
-              <Sidebar
-                loggedIn={currentUser ? true : false}
-                userID={currentUser ? currentUser.id : 0}
-                toggleSignup={toggleSignup}
-                selectForm={setSelectedForm}
-                signOut={signOutUser}
-                lists={currentUser ? currentUser.lists : []}
-                updateUser={setCurrentUser}
-              />
-            </Sider>
+            {currentUser ? showHeaderOrSidebar() : null}
             <Layout>
               <Content>
                 <Route exact path="/">
@@ -106,6 +157,7 @@ function App() {
                 </Route>
                 <Route path="/item-details">
                   <MainContainer>
+                    {selectedForm ? showFormModal(selectedForm) : null}
                     {currentItem && currentUser ? (
                       <ItemDetails
                         item={currentItem}
@@ -117,6 +169,16 @@ function App() {
                       />
                     ) : (
                       <Redirect to="/profile" />
+                    )}
+                  </MainContainer>
+                </Route>
+                <Route path="/user-stats">
+                  <MainContainer>
+                    {selectedForm ? showFormModal(selectedForm) : null}
+                    {currentUser ? (
+                      <StatsPage user={currentUser} />
+                    ) : (
+                      <Redirect to="/" />
                     )}
                   </MainContainer>
                 </Route>

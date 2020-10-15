@@ -6,6 +6,7 @@ import {
   UserOutlined,
   UnorderedListOutlined,
   FileAddOutlined,
+  PieChartOutlined,
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import NewListForm from "../forms/newListForm";
@@ -14,7 +15,7 @@ import { List } from "../interfaces/list";
 
 const { SubMenu, Item } = Menu;
 
-const Sidebar: React.FC<{
+const MenuBar: React.FC<{
   loggedIn: boolean;
   toggleSignup: Function;
   selectForm: Function;
@@ -22,6 +23,13 @@ const Sidebar: React.FC<{
   userID: number;
   lists: List[];
   updateUser: Function;
+  mode:
+    | "horizontal"
+    | "vertical-left"
+    | "vertical-right"
+    | "vertical"
+    | "inline";
+  width?: number;
 }> = ({
   loggedIn,
   toggleSignup,
@@ -30,19 +38,21 @@ const Sidebar: React.FC<{
   userID,
   lists,
   updateUser,
+  mode,
+  width,
 }) => {
   const handleSignOut = (): void => {
     toggleSignup(false);
     signOut();
   };
   return (
-    <div style={{ width: 50 }}>
+    <div style={{ width: width ? width : "100%" }}>
       <Menu
         defaultSelectedKeys={["1"]}
         defaultOpenKeys={["sub1"]}
-        mode="inline"
+        mode={mode}
         theme="light"
-        inlineCollapsed={true}
+        inlineCollapsed={width ? true : false}
       >
         <Item key="1" icon={<UserOutlined />}>
           <Link to="/" onClick={handleSignOut}>
@@ -84,9 +94,12 @@ const Sidebar: React.FC<{
         >
           Add Item
         </Item>
+        <Item key="6" icon={<PieChartOutlined />}>
+          <Link to="/user-stats">Stats</Link>
+        </Item>
       </Menu>
     </div>
   );
 };
 
-export default Sidebar;
+export default MenuBar;

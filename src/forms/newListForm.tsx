@@ -4,6 +4,7 @@ import "./form.css";
 import { validatePresence } from "./validators";
 import { LISTS } from "../apiEndpoints";
 import { Redirect } from "react-router";
+import { Button } from "antd";
 
 interface Values {
   title: String;
@@ -85,11 +86,15 @@ const NewListForm: React.FC<{
               type="description"
               placeholder="Description"
             />
-            <div>
-              <button type="button" onClick={() => handleCancel()}>
+            <div className="button-div">
+              <Button type="default" onClick={() => handleCancel()}>
                 Cancel
-              </button>
-              <button type="submit">Submit</button>
+              </Button>
+              <Button type="primary" htmlType="submit">
+                Submit
+              </Button>
+            </div>
+            <div>
               {errorMessage !== "" ? (
                 <div className="error-message">{errorMessage}</div>
               ) : null}

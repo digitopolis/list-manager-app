@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Item } from "../interfaces/item";
 import "./components.css";
 import { Redirect } from "react-router";
-import { colors } from "../tagColors";
+import { Colors } from "../tagColors";
 import { Tag } from "antd";
 
 const SingleItem: React.FC<{ item: Item; selectItem: Function }> = ({
@@ -19,10 +19,10 @@ const SingleItem: React.FC<{ item: Item; selectItem: Function }> = ({
 
   const generateTag = (tag: string) => {
     let color = "";
-    if (Object.keys(colors).includes(tag)) {
-      color = colors[tag];
+    if (Object.keys(Colors).includes(tag)) {
+      color = Colors[tag];
     } else {
-      color = colors["Custom"];
+      color = Colors["Custom"];
     }
     return <Tag color={color}>{tag}</Tag>;
   };
@@ -39,7 +39,12 @@ const SingleItem: React.FC<{ item: Item; selectItem: Function }> = ({
             </button>
           </h3>
           {image_url ? (
-            <img className="image-small" src={image_url} alt="Cover" />
+            <img
+              className="image-small"
+              src={image_url}
+              alt="Cover"
+              onClick={handleItemSelect}
+            />
           ) : (
             <div className="placeholder-image"></div>
           )}

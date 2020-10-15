@@ -7,7 +7,7 @@ import { Formik, Form, Field } from "formik";
 import { List } from "../interfaces/list";
 import { Redirect } from "react-router";
 import "./components.css";
-import { colors } from "../tagColors";
+import { Colors } from "../tagColors";
 
 interface Values {
   list_id: number;
@@ -74,10 +74,10 @@ const ItemDetails: React.FC<{
 
   const generateTag = (tag: string) => {
     let color = "";
-    if (Object.keys(colors).includes(tag)) {
-      color = colors[tag];
+    if (Object.keys(Colors).includes(tag)) {
+      color = Colors[tag];
     } else {
-      color = colors["Custom"];
+      color = Colors["Custom"];
     }
     return <Tag color={color}>{tag}</Tag>;
   };
