@@ -3,10 +3,12 @@ import "./components.css";
 import { User } from "../interfaces/user";
 import ListContainer from "../containers/listContainer";
 
-const ProfilePage: React.FC<{ user: User | null; selectItem: Function }> = (
-  props
-) => {
-  const { user, selectItem } = props;
+const ProfilePage: React.FC<{
+  user: User | null;
+  selectItem: Function;
+  selectList: Function;
+}> = (props) => {
+  const { user, selectItem, selectList } = props;
   const [lists, setLists] = useState(user ? user.lists : []);
 
   useEffect(() => {
@@ -17,7 +19,11 @@ const ProfilePage: React.FC<{ user: User | null; selectItem: Function }> = (
 
   return (
     <div className="profile-page">
-      <ListContainer lists={lists} selectItem={selectItem} />
+      <ListContainer
+        lists={lists}
+        selectItem={selectItem}
+        selectList={selectList}
+      />
     </div>
   );
 };
