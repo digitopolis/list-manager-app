@@ -7,6 +7,7 @@ import { Formik, Form, Field } from "formik";
 import { List } from "../interfaces/list";
 import { Redirect } from "react-router";
 import "./components.css";
+import "../forms/form.css";
 import { Colors } from "../tagColors";
 
 interface Values {
@@ -92,7 +93,11 @@ const ItemDetails: React.FC<{
   const completedButton = () => {
     return (
       <div>
-        <button onClick={markCompleted}>Completed</button>
+        <div className="button-div">
+          <Button type="primary" htmlType="submit" onClick={markCompleted}>
+            Completed
+          </Button>
+        </div>
         {errorMessage !== "" ? (
           <div className="error-message">{errorMessage}</div>
         ) : null}
@@ -148,7 +153,11 @@ const ItemDetails: React.FC<{
               })}
             </Field>
             <div>
-              <button type="submit">Submit</button>
+              <div className="button-div">
+                <Button type="primary" htmlType="submit">
+                  Submit
+                </Button>
+              </div>
               {errorMessage !== "" ? (
                 <div className="error-message">{errorMessage}</div>
               ) : null}
