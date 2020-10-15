@@ -39,7 +39,12 @@ const SingleItem: React.FC<{ item: Item; selectItem: Function }> = ({
             </button>
           </h3>
           {image_url ? (
-            <img className="image-small" src={image_url} alt="Cover" />
+            <img
+              className="image-small"
+              src={image_url}
+              alt="Cover"
+              onClick={handleItemSelect}
+            />
           ) : (
             <div className="placeholder-image"></div>
           )}

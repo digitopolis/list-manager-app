@@ -5,6 +5,7 @@ import { validatePresence } from "./validators";
 import { ITEMS } from "../apiEndpoints";
 import { List } from "../interfaces/list";
 import { Redirect } from "react-router";
+import { Button } from "antd";
 
 interface Values {
   title: String;
@@ -161,11 +162,15 @@ const NewItemForm: React.FC<{
                 );
               })}
             </Field>
-            <div>
-              <button type="button" onClick={() => handleCancel()}>
+            <div className="button-div">
+              <Button type="default" onClick={() => handleCancel()}>
                 Cancel
-              </button>
-              <button type="submit">Submit</button>
+              </Button>
+              <Button type="primary" htmlType="submit">
+                Submit
+              </Button>
+            </div>
+            <div>
               {errorMessage !== "" ? (
                 <div className="error-message">{errorMessage}</div>
               ) : null}
